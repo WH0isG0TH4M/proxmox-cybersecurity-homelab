@@ -13,8 +13,8 @@ The labs are designed for Active Directory security testing, malware analysis, r
 | 100 | FLARE-VM | VM | Windows malware analysis |
 | 104 | AD | VM | Active Directory Domain Controller |
 | 105 | REMnux | VM | Linux malware analysis |
-| 107 | AD-Heaven | VM | Domain User 1 |
-| 108 | AD-SPIDEY | VM | Domain User 2 |
+| 107 | AD-Heaven | VM | Windows 10 domain-joined workstation |
+| 108 | AD-SPIDEY | VM | Windows 10 domain-joined workstation |
 | 101 | Pi-hole | LXC | DNS filtering and ad blocking |
 | 102 | Jellyfin | LXC | Media server |
 | 106 | Ollama | LXC | Local AI inference |
@@ -23,24 +23,76 @@ The labs are designed for Active Directory security testing, malware analysis, r
 
 ### Systems
 
-| VMID | Name | Role |
-|---|---|---|
-| 104 | AD | Domain Controller |
-| 107 | AD-Heaven | Domain User 1 |
-| 108 | AD-SPIDEY | Domain User 2 |
+| VMID | Proxmox Name | Windows Hostname | Role |
+|---|---|---|---|
+| 104 | AD | HYDRA-DC | Domain Controller |
+| 107 | AD-Heaven | HEAVEN | Domain-joined workstation |
+| 108 | AD-SPIDEY | PETER | Domain-joined workstation |
+
+### Domain Information
+
+| Component | Configuration |
+|---|---|
+| Domain | `MARVEL.LOCAL` |
+| Domain Controller | `HYDRA-DC` |
+| Server OS | Windows Server 2025 Standard Evaluation |
+| Server Version | 24H2 |
+| Server Build | 26100.32230 |
+| Client OS | Windows 10 Pro 22H2 |
+
+### Domain User Accounts
+
+| Workstation | Domain User Account |
+|---|---|
+| AD-Heaven | `hdimla` |
+| AD-SPIDEY | `pparker` |
 
 ### Purpose
 
-A virtualized Windows domain environment for practicing Active Directory administration, attack techniques, and defensive security.
+A virtualized Windows domain environment based on the Active Directory lab from TCM Security's Practical Ethical Hacking (PEH) course.
+
+It provides an environment for practicing Active Directory administration, attack techniques, enumeration, privilege escalation, and defensive security.
+
+### Configured Components
+
+- Active Directory Domain Services (AD DS)
+- Active Directory Certificate Services (AD CS)
+- Domain user and service accounts
+- Service Principal Name (SPN) configuration
+- SMB file sharing
+- Group Policy Management
+
+### Security Configurations
+
+**SQLService Account**
+
+A service account named `SQLService` is configured with a Service Principal Name (SPN).
+
+This provides an environment for studying Kerberos authentication and Kerberoasting.
+
+**SMB Share**
+
+An SMB network share named `hackme` is configured for practicing SMB enumeration and access control testing.
+
+**Group Policy**
+
+A Group Policy Object (GPO) is configured to disable Windows Defender for controlled penetration testing exercises.
+
+**Active Directory Certificate Services**
+
+AD CS is installed to provide an environment for studying certificate-based authentication and potential certificate service misconfigurations.
 
 ### Areas of Practice
 
 - Domain Controller administration
 - Active Directory enumeration
 - Kerberos authentication attacks
+- Kerberoasting
 - Password attacks
+- SMB enumeration
+- Group Policy enumeration
+- AD CS security testing
 - Domain privilege escalation
-- Group Policy security
 - BloodHound analysis
 - Active Directory hardening
 - Windows domain security assessment
@@ -75,7 +127,19 @@ A dedicated environment for analyzing suspicious files, understanding malware be
 - Static analysis
 - Dynamic analysis
 - Reverse engineering
-  
+
+### Network Configuration
+
+FLARE-VM and REMnux use two Proxmox network bridges depending on the activity.
+
+| Bridge | Purpose |
+|---|---|
+| vmbr0 | Internet access for updates and downloading tools |
+| vmbr1 | Isolated network for malware testing |
+
+Both machines are manually switched between the two bridges.
+
+During malware testing, FLARE-VM and REMnux are connected to `vmbr1`, allowing them to communicate with each other without normal internet connectivity.
 
 ### Security Considerations
 
